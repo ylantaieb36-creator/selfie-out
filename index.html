@@ -4,56 +4,54 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#0d0f11">
-<meta name="apple-mobile-web-app-capable" content="yes">
 <title>סלפי אאוט</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Secular+One&family=IBM+Plex+Mono:wght@500&display=swap">
 <style>
 :root{--bg:#0d0f11;--ink:#efede8;--muted:#9ea4aa;--accent:#f2a93b;--accent-ink:#1d1406;--glass:rgba(13,15,17,.62);--ok:#78c995;--warn:#e9b44c;
   --f-display:'Secular One','Arial Hebrew',system-ui,sans-serif;--f-body:'Assistant','Arial Hebrew',system-ui,sans-serif;--f-mono:'IBM Plex Mono',ui-monospace,monospace;color-scheme:dark}
 *{box-sizing:border-box}
-html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:var(--f-body);overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:var(--f-body);overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
 [hidden]{display:none!important}
 .screen{position:fixed;inset:0;display:flex;flex-direction:column}
 button{font:700 16px/1 var(--f-body);border:0;border-radius:999px;padding:14px 22px;background:rgba(255,255,255,.12);color:var(--ink);cursor:pointer;min-height:48px}
 button.primary{background:var(--accent);color:var(--accent-ink)}
+button:disabled{opacity:.4}
 button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.small{font-size:14px;padding:10px 14px;min-height:42px;background:var(--glass);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 
-/* Intro */
 #intro{justify-content:center;align-items:center;padding:calc(24px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom));gap:22px;text-align:center}
 #intro h1{font-family:var(--f-display);font-weight:400;font-size:44px;margin:0;line-height:1}
 #intro h1 span{color:var(--accent)}
-#intro ol{text-align:right;margin:0;padding-inline-start:22px;max-width:340px;display:flex;flex-direction:column;gap:8px;color:var(--muted);font-size:17px}
+#intro ol{text-align:right;margin:0;padding-inline-start:22px;max-width:350px;display:flex;flex-direction:column;gap:8px;color:var(--muted);font-size:17px}
 #intro ol li::marker{color:var(--accent);font-family:var(--f-mono)}
 #intro .err{color:var(--warn);max-width:340px;font-size:15px}
 
-/* Camera */
 #cam{background:#000}
 #stage{position:absolute;inset:0;display:grid;place-items:center;touch-action:none}
-#view{display:block;max-width:100%;max-height:100%}
-#view.mirror{transform:scaleX(-1)}
-.top{position:absolute;top:calc(12px + env(safe-area-inset-top));left:12px;right:12px;display:flex;justify-content:center;pointer-events:none}
-.pill{background:var(--glass);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:8px 14px;border-radius:999px;font-size:15px;font-weight:600;max-width:100%;text-align:center}
+#gl{display:block}
+#gl.mirror{transform:scaleX(-1)}
+.top{position:absolute;top:calc(12px + env(safe-area-inset-top));left:12px;right:12px;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
+.pill{background:var(--glass);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:9px 15px;border-radius:14px;font-size:16px;font-weight:600;max-width:100%;text-align:center;line-height:1.35}
+.pill small{display:block;font-weight:400;color:var(--muted);font-size:14px}
 .pill.ok{color:var(--ok)} .pill.warn{color:var(--warn)}
-.readout{position:absolute;top:calc(60px + env(safe-area-inset-top));right:12px;font-family:var(--f-mono);font-size:13px;background:var(--glass);padding:6px 10px;border-radius:8px;line-height:1.5;text-align:left;direction:ltr;pointer-events:none}
+.map{background:var(--glass);border-radius:10px;padding:6px;display:flex;flex-direction:column;align-items:center;gap:4px;font-family:var(--f-mono);font-size:13px}
+.map canvas{display:block;border-radius:4px}
+.map b{color:var(--accent);font-weight:500}
+.readout{position:absolute;top:calc(64px + env(safe-area-inset-top));right:12px;font-family:var(--f-mono);font-size:13px;background:var(--glass);padding:6px 10px;border-radius:8px;line-height:1.5;direction:ltr;text-align:left;pointer-events:none}
 .readout b{color:var(--accent);font-weight:500}
 .bottom{position:absolute;left:0;right:0;bottom:0;padding:16px 16px calc(20px + env(safe-area-inset-bottom));display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;background:linear-gradient(transparent,rgba(0,0,0,.55))}
-.bottom .side{display:flex;justify-content:center}
+.bottom .side{display:flex;flex-direction:column;align-items:center;gap:8px}
 .shutter{width:76px;height:76px;border-radius:50%;padding:0;background:transparent;border:4px solid #fff;display:grid;place-items:center}
 .shutter::after{content:"";width:60px;height:60px;border-radius:50%;background:#fff;transition:transform .1s}
 .shutter:active::after{transform:scale(.88)}
-.shutter:disabled{opacity:.4}
-.small{font-size:14px;padding:10px 14px;min-height:42px;background:var(--glass)}
-.hint{position:absolute;left:16px;right:16px;bottom:calc(130px + env(safe-area-inset-bottom));text-align:center;pointer-events:none}
-.hint span{background:var(--glass);padding:8px 14px;border-radius:999px;font-size:15px}
+.hint{position:absolute;left:16px;right:16px;bottom:calc(132px + env(safe-area-inset-bottom));text-align:center;pointer-events:none}
+.hint span{background:var(--glass);padding:8px 14px;border-radius:999px;font-size:15px;display:inline-block}
+#scanBottom{position:absolute;left:0;right:0;bottom:0;padding:16px 16px calc(24px + env(safe-area-inset-bottom));display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+#tune{position:absolute;left:12px;right:12px;bottom:calc(120px + env(safe-area-inset-bottom));background:var(--glass);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;font-size:14px}
+#tune label{display:grid;grid-template-columns:5.5em 1fr;gap:10px;align-items:center}
+#tune input{width:100%;accent-color:var(--accent)}
+#tune .row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 
-/* Scan overlay */
-#scanUI{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;align-items:center;padding:calc(20px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));pointer-events:none}
-#scanUI .msg{background:var(--glass);border-radius:16px;padding:14px 18px;text-align:center;font-size:19px;font-weight:700;max-width:360px}
-#scanUI .msg small{display:block;font-weight:400;font-size:15px;color:var(--muted);margin-top:4px}
-#count{font-family:var(--f-display);font-size:96px;color:var(--accent);text-shadow:0 2px 20px rgba(0,0,0,.6)}
-#scanUI .row{display:flex;gap:10px;pointer-events:auto;flex-wrap:wrap;justify-content:center}
-
-/* Result */
 #result{background:var(--bg);padding:calc(16px + env(safe-area-inset-top)) 16px calc(20px + env(safe-area-inset-bottom));gap:14px;align-items:center}
 #result img{flex:1;min-height:0;max-width:100%;object-fit:contain;border-radius:8px}
 #result .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
@@ -65,42 +63,48 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 <section class="screen" id="intro">
   <h1>סלפי <span>אאוט</span></h1>
   <ol>
-    <li>המצלמה האחורית נפתחת. הסתובב אל הנוף לשתי שניות, והיא קולטת אותו לבד.</li>
-    <li>חוזרים לסלפי בשידור חי.</li>
-    <li>פותחים שתי אצבעות על המסך, והתמונה מתרחבת כמו עם מוט סלפי.</li>
+    <li>סורקים את הסביבה: מסובבים את הטלפון לאט מסביב, וגם למעלה ולמטה.</li>
+    <li>עוברים לסלפי. הסביבה נשמרת ונעולה במקום.</li>
+    <li>פותחים שתי אצבעות, והתמונה מתרחבת כמו עם מוט סלפי. אפשר לזוז והנוף זז איתך.</li>
   </ol>
-  <button class="primary" id="startBtn">התחל</button>
+  <button class="primary" id="startBtn">התחל סריקה</button>
   <div class="err" id="introErr" hidden></div>
 </section>
 
 <section class="screen" id="cam" hidden>
-  <div id="stage"><canvas id="view"></canvas></div>
+  <div id="stage"><canvas id="gl"></canvas></div>
   <video id="video" playsinline muted autoplay style="position:absolute;width:2px;height:2px;opacity:0;pointer-events:none;top:0;left:0"></video>
 
-  <div id="liveUI" hidden>
-    <div class="top"><div class="pill" id="status">מחפש התאמה לנוף…</div></div>
-    <div class="readout" id="readout">zoom <b id="zv">1.00×</b><br>FOV ≈ <b id="fov">52°</b></div>
-    <div class="hint" id="pinchHint" hidden><span>פתח שתי אצבעות לזום אאוט</span></div>
-    <div class="bottom">
-      <div class="side"><button class="small" id="rescan">סריקה מחדש</button></div>
-      <button class="shutter" id="shutter" aria-label="צילום"></button>
-      <div class="side"><button class="small" id="mirrorBtn">מראה: פועל</button></div>
+  <div id="scanUI" hidden>
+    <div class="top">
+      <div class="pill" id="scanMsg">סובב את הטלפון לאט סביבך<small>ימינה, שמאלה, למעלה ולמטה. החזק לאורך</small></div>
+      <div class="map"><canvas id="mini" width="216" height="108"></canvas><span>כיסוי <b id="cov">0%</b></span></div>
+    </div>
+    <div id="scanBottom">
+      <button class="primary" id="scanDone" disabled>סיימתי, לסלפי</button>
     </div>
   </div>
 
-  <div id="scanUI" hidden>
-    <div class="msg">הסתובב עם הטלפון אל הנוף שמאחוריך<small>החזק יציב. הצילום יקרה לבד</small></div>
-    <div id="count">3</div>
-    <div class="row">
-      <button class="small" id="lensBtn" hidden>החלף עדשה</button>
-      <button class="small" id="snapNow">צלם עכשיו</button>
+  <div id="liveUI" hidden>
+    <div class="top"><div class="pill" id="status">מתאים את הסלפי לסביבה…</div></div>
+    <div class="readout">zoom <b id="zv">1.00×</b><br>FOV ≈ <b id="fov">—</b></div>
+    <div class="hint" id="pinchHint"><span>פתח שתי אצבעות לזום אאוט</span></div>
+    <div id="tune" hidden>
+      <label>גודל הנוף <input type="range" id="sizeR" min="-300" max="300" value="0"></label>
+      <div style="color:var(--muted)">גרירה באצבע אחת מזיזה את הנוף עד שהתפר נעלם</div>
+      <div class="row"><button class="small" id="autoAlign">יישור אוטומטי</button><button class="small" id="tuneDone">סגירה</button></div>
+    </div>
+    <div class="bottom">
+      <div class="side"><button class="small" id="rescan">סריקה מחדש</button></div>
+      <button class="shutter" id="shutter" aria-label="צילום"></button>
+      <div class="side"><button class="small" id="tuneBtn">כיוונון</button><button class="small" id="mirrorBtn">מראה: פועל</button></div>
     </div>
   </div>
 </section>
 
 <section class="screen" id="result" hidden>
   <img id="resImg" alt="התמונה שצולמה">
-  <p id="resNote">באייפון: לחיצה ארוכה על התמונה ← "שמור בתמונות"</p>
+  <p>אפשר גם ללחוץ לחיצה ארוכה על התמונה כדי לשמור</p>
   <div class="row">
     <button class="primary" id="shareBtn">שמירה / שיתוף</button>
     <button id="backBtn">חזרה למצלמה</button>
@@ -215,234 +219,278 @@ function alignSelfieToScene(cv, scene, selfie) {
 
 
 
-// ---------- helpers ----------
+// ================= helpers =================
 const $=s=>document.querySelector(s);
-const CV_URL='https://cdn.jsdelivr.net/npm/@techstark/opencv-js@4.12.0-release.1/dist/opencv.js';
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const DEG=Math.PI/180;
+const CV_URL='https://cdn.jsdelivr.net/npm/@techstark/opencv-js@4.12.0-release.1/dist/opencv.js';
 function mk(w,h){const c=document.createElement('canvas'); c.width=w; c.height=h; return c;}
-function toCanvas(src,max){const w0=src.videoWidth||src.width, h0=src.videoHeight||src.height, k=Math.min(1,max/Math.max(w0,h0));
-  const c=mk(Math.round(w0*k),Math.round(h0*k)), x=c.getContext('2d'); x.imageSmoothingQuality='high'; x.drawImage(src,0,0,c.width,c.height); return c;}
-function imageDataOf(canvas,max){const c=toCanvas(canvas,max); return c.getContext('2d',{willReadFrequently:true}).getImageData(0,0,c.width,c.height);}
-
-let cvPromise=null;
+let cvPromise=null, CV=null;
 function loadCV(){
   if(cvPromise) return cvPromise;
   cvPromise=new Promise((res,rej)=>{
     const s=document.createElement('script'); s.src=CV_URL; s.async=true; s.onerror=()=>rej(new Error('load'));
     s.onload=async()=>{ try{ let c=window.cv; if(c instanceof Promise) c=await c; const t0=Date.now();
-        while(!(c&&c.Mat&&c.ORB)){ if(Date.now()-t0>30000) throw new Error('init'); await sleep(100); c=(window.cv&&window.cv.Mat)?window.cv:c; }
-        res({cv:c}); }catch(e){rej(e);} };
+      while(!(c&&c.Mat&&c.ORB)){ if(Date.now()-t0>30000) throw new Error('init'); await sleep(100); c=(window.cv&&window.cv.Mat)?window.cv:c; }
+      res({cv:c}); }catch(e){rej(e);} };
     document.head.appendChild(s);
   });
   cvPromise.catch(()=>{cvPromise=null;});
   return cvPromise;
 }
-let CV=null; // set when ready
 
-// pure-JS fallback (coarse)
-function grayOf(canvas,w,h,flip){const c=mk(w,h),x=c.getContext('2d',{willReadFrequently:true}); if(flip){x.translate(w,0);x.scale(-1,1);} x.drawImage(canvas,0,0,w,h);
-  const d=x.getImageData(0,0,w,h).data,g=new Float32Array(w*h); for(let i=0;i<w*h;i++) g[i]=0.299*d[i*4]+0.587*d[i*4+1]+0.114*d[i*4+2]; return g;}
-function jsAlign(scene,selfie){
-  const SW=128,SH=Math.round(SW*scene.height/scene.width),G=grayOf(scene,SW,SH,false); let best={score:-2};
-  for(const flipped of [false,true]){ for(let tw=30;tw<=SW;tw=Math.round(tw*1.08)+1){
-    const th=Math.round(tw*selfie.height/selfie.width); if(th>SH) break;
-    const T=grayOf(selfie,tw,th,flipped),idx=[];
-    for(let y=0;y<th;y++)for(let x=0;x<tw;x++){const nx=(x/tw-.5)/.34,ny=(y/th-.7)/.48; if(nx*nx+ny*ny>1) idx.push([x,y,T[y*tw+x]]);}
-    const n=idx.length; if(n<40) continue; let mt=0; for(const p of idx) mt+=p[2]; mt/=n; let vt=0; for(const p of idx){p[2]-=mt; vt+=p[2]*p[2];} if(vt<1e-6) continue;
-    const at=(ox,oy)=>{let s=0,s2=0,st=0; for(const p of idx){const v=G[(oy+p[1])*SW+ox+p[0]]; s+=v; s2+=v*v; st+=v*p[2];} const vs=s2-s*s/n; return vs<1e-6?-2:st/Math.sqrt(vs*vt);};
-    let lb={score:-2}; for(let oy=0;oy<=SH-th;oy+=2)for(let ox=0;ox<=SW-tw;ox+=2){const s=at(ox,oy); if(s>lb.score) lb={score:s,ox,oy};}
-    if(lb.score<=-2) continue;
-    for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const ox=lb.ox+dx,oy=lb.oy+dy; if(ox<0||oy<0||ox>SW-tw||oy>SH-th) continue; const s=at(ox,oy); if(s>lb.score) lb={score:s,ox,oy};}
-    if(lb.score>best.score) best={...lb,tw,flipped}; } }
-  if(best.score<=-2) return null; const k=scene.width/SW;
-  return {m:{a:best.tw/selfie.width*k,b:0,tx:best.ox*k,ty:best.oy*k},flipped:best.flipped,inliers:Math.round(best.score*100),weak:best.score<0.5};
+// ================= orientation =================
+// W3C device-orientation rotation matrix (row-major), device frame -> earth frame (x east, y north, z up)
+function rotFromEuler(a,b,g){
+  const x=b*DEG,y=g*DEG,z=a*DEG, cX=Math.cos(x),cY=Math.cos(y),cZ=Math.cos(z),sX=Math.sin(x),sY=Math.sin(y),sZ=Math.sin(z);
+  return [cZ*cY-sZ*sX*sY, -cX*sZ, cY*sZ*sX+cZ*sY,
+          cY*sZ+cZ*sX*sY,  cZ*cX, sZ*sY-cZ*cY*sX,
+          -cX*sY,          sX,    cX*cY];
 }
+const colMajor=R=>[R[0],R[3],R[6],R[1],R[4],R[7],R[2],R[5],R[8]]; // for GLSL mat3 = R
+function rearFwd(R){return [-R[2],-R[5],-R[8]];}
+function angDeg(u,v){return Math.acos(Math.max(-1,Math.min(1,u[0]*v[0]+u[1]*v[1]+u[2]*v[2])))/DEG;}
+const ori={R:null,t:0,speed:0,hist:[],got:false};
+function onOri(e){
+  if(e.alpha==null||e.beta==null) return;
+  const R=rotFromEuler(e.alpha,e.beta,e.gamma), t=performance.now();
+  if(ori.R){ const dt=(t-ori.t)/1000; if(dt>0.001){ const s=angDeg(rearFwd(ori.R),rearFwd(R))/dt; ori.speed=0.75*ori.speed+0.25*s; } }
+  ori.R=R; ori.t=t; ori.got=true; ori.hist.push([t,R]); if(ori.hist.length>40) ori.hist.shift();
+}
+function oriAt(t){ let best=ori.R; for(let i=ori.hist.length-1;i>=0;i--){ best=ori.hist[i][1]; if(ori.hist[i][0]<=t) break; } return best; }
 
-// ---------- state ----------
-const st={stream:null, rearDevices:[], rearIdx:0, scene:null, sceneCC:null, M:null, zMin:1, z:1, flipFrame:false, mirror:true,
-  frame:null, mask:null, phase:'intro', aligning:false, lastAlign:0, goodAligns:0, pinching:false};
-const video=$('#video'), view=$('#view'), vctx=view.getContext('2d');
+// ================= WebGL =================
+const cnv=$('#gl'); let gl=null; const G={};
+const VS='attribute vec2 p;varying vec2 uv;void main(){uv=p*0.5+0.5;gl_Position=vec4(p,0.0,1.0);}';
+const FS_PAINT=`precision highp float;varying vec2 uv;uniform sampler2D vid;uniform mat3 Rt;uniform vec2 tanHV;const float PI=3.14159265;
+void main(){float lat=(uv.y-0.5)*PI,lon=(uv.x-0.5)*2.0*PI;vec3 d=vec3(cos(lat)*sin(lon),cos(lat)*cos(lon),sin(lat));vec3 c=Rt*d;
+if(c.z>-0.05)discard;vec2 q=vec2(c.x,c.y)/(-c.z)/tanHV;float m=max(abs(q.x),abs(q.y));if(m>1.0)discard;
+vec3 col=texture2D(vid,vec2(q.x*0.5+0.5,0.5-q.y*0.5)).rgb;gl_FragColor=vec4(col,smoothstep(1.0,0.72,m));}`;
+const FS_VIEW=`precision highp float;varying vec2 uv;uniform sampler2D env,vid;uniform mat3 Rm;uniform vec2 tanF;uniform float z,flipV,mode,tanE;uniform vec2 off;uniform vec3 gain;const float PI=3.14159265;
+vec3 envAt(vec2 xy){vec3 w=normalize(Rm*vec3(-xy.x,xy.y,1.0));float lat=asin(clamp(w.z,-1.0,1.0));float lon=atan(w.x,w.y);
+vec4 e=texture2D(env,vec2(lon/(2.0*PI)+0.5,lat/PI+0.5));return mix(vec3(0.09,0.10,0.11),e.rgb,step(0.3,e.a));}
+void main(){
+if(mode>1.5){gl_FragColor=vec4(texture2D(vid,vec2(uv.x,1.0-uv.y)).rgb,1.0);return;}
+if(mode>0.5){vec2 xy=vec2((uv.x*2.0-1.0)*tanE,(uv.y*2.0-1.0)*tanE*tanF.y/tanF.x);gl_FragColor=vec4(envAt(xy),1.0);return;}
+float x=(uv.x*2.0-1.0)*tanF.x/z;float y=-tanF.y+uv.y*2.0*tanF.y/z;
+vec3 col=envAt(vec2(x,y)+off)*gain;vec2 s=vec2(x/tanF.x,y/tanF.y);
+if(abs(s.x)<=1.0&&abs(s.y)<=1.0){float sx=flipV>0.5?-s.x:s.x;vec3 v=texture2D(vid,vec2(sx*0.5+0.5,0.5-s.y*0.5)).rgb;
+float a=smoothstep(0.0,0.07,1.0-abs(s.x))*smoothstep(0.0,0.07,1.0-s.y);if(z>0.995)a=1.0;col=mix(col,v,a);}
+gl_FragColor=vec4(col,1.0);}`;
+function sh(type,src){const s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s); if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s;}
+function prog(fs){const p=gl.createProgram(); gl.attachShader(p,sh(gl.VERTEX_SHADER,VS)); gl.attachShader(p,sh(gl.FRAGMENT_SHADER,fs)); gl.bindAttribLocation(p,0,'p'); gl.linkProgram(p);
+  if(!gl.getProgramParameter(p,gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p)); const u={}; const n=gl.getProgramParameter(p,gl.ACTIVE_UNIFORMS);
+  for(let i=0;i<n;i++){const a=gl.getActiveUniform(p,i); u[a.name]=gl.getUniformLocation(p,a.name);} return {p,u};}
+function tex(wrapS){const t=gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D,t); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,wrapS); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE); return t;}
+function initGL(){
+  gl=cnv.getContext('webgl',{preserveDrawingBuffer:true,alpha:false,antialias:false}); if(!gl) throw new Error('webgl');
+  G.paint=prog(FS_PAINT); G.view=prog(FS_VIEW);
+  G.quad=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,G.quad); gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0,2,gl.FLOAT,false,0,0);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);
+  G.S=gl.getParameter(gl.MAX_TEXTURE_SIZE)>=4096?4096:2048;
+  G.env=tex(gl.REPEAT); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,G.S,G.S/2,0,gl.RGBA,gl.UNSIGNED_BYTE,null);
+  G.envFbo=gl.createFramebuffer(); gl.bindFramebuffer(gl.FRAMEBUFFER,G.envFbo); gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,G.env,0);
+  gl.clearColor(0,0,0,0); gl.clear(gl.COLOR_BUFFER_BIT); gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+  G.vid=tex(gl.CLAMP_TO_EDGE);
+  G.cw=480; G.ch=640; gl.activeTexture(gl.TEXTURE2); G.calTex=tex(gl.CLAMP_TO_EDGE); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,G.cw,G.ch,0,gl.RGBA,gl.UNSIGNED_BYTE,null);
+  G.calFbo=gl.createFramebuffer(); gl.bindFramebuffer(gl.FRAMEBUFFER,G.calFbo); gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,G.calTex,0); gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+}
+function clearEnv(){ gl.bindFramebuffer(gl.FRAMEBUFFER,G.envFbo); gl.viewport(0,0,G.S,G.S/2); gl.clearColor(0,0,0,0); gl.clear(gl.COLOR_BUFFER_BIT); gl.bindFramebuffer(gl.FRAMEBUFFER,null); }
+function uploadVideo(){ gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D,G.vid); try{ gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,video); return true; }catch(e){ return false; } }
+
+// ================= state =================
+const video=$('#video');
+const st={phase:'intro', stream:null, rearTanV:Math.tan(32*DEG), frontTanV:Math.tan(35*DEG), tanF:[0.5,0.7], sizeK:1, off:[0,0], gain:[1,1,1],
+  z:1, mirror:true, flipV:false, cover:new Uint8Array(72*36), coverPct:0, lastPaintDir:null, lastPaintT:0, calBusy:false, lastCal:0, calOK:0, pinching:false};
 function show(id){ for(const s of ['intro','cam','result']) $('#'+s).hidden=(s!==id); }
 function setStatus(t,cls){const e=$('#status'); e.textContent=t; e.className='pill'+(cls?' '+cls:'');}
 
-// ---------- camera ----------
+// ================= camera =================
 function stopStream(){ if(st.stream){ st.stream.getTracks().forEach(t=>t.stop()); st.stream=null; } }
-async function openCamera(facing, deviceId){
+async function openCamera(facing){
   stopStream();
-  const v={width:{ideal:1920},height:{ideal:1440}};
-  const c={audio:false, video: deviceId?{...v,deviceId:{exact:deviceId}}:{...v,facingMode:{ideal:facing}}};
-  let s; try{ s=await navigator.mediaDevices.getUserMedia(c); }catch(e){ s=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:facing}}); }
+  let s; try{ s=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:facing},width:{ideal:1280},height:{ideal:960}}}); }
+  catch(e){ s=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:facing}}); }
   st.stream=s; video.srcObject=s; await video.play().catch(()=>{});
-  const t0=Date.now(); while(!video.videoWidth && Date.now()-t0<5000) await sleep(50);
-  // widest zoom the browser exposes (some Android phones allow < 1)
-  const tr=s.getVideoTracks()[0]; try{ const cap=tr.getCapabilities?tr.getCapabilities():{}; if(facing==='environment'&&cap.zoom&&cap.zoom.min<1) await tr.applyConstraints({advanced:[{zoom:cap.zoom.min}]}); }catch(e){}
-  return tr;
+  const t0=Date.now(); while((!video.videoWidth||video.readyState<2)&&Date.now()-t0<6000) await sleep(50);
 }
-async function listRear(){
-  try{ const ds=(await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==='videoinput');
-    const rear=ds.filter(d=>/back|rear|environment|אחור/i.test(d.label)); st.rearDevices=rear.length>1?rear:[]; }catch(e){ st.rearDevices=[]; }
-  $('#lensBtn').hidden=st.rearDevices.length<2;
+function fitCanvas(){
+  const vw=video.videoWidth||3, vh=video.videoHeight||4, W=window.innerWidth, H=window.innerHeight, k=Math.min(W/vw,H/vh), dpr=Math.min(2,window.devicePixelRatio||1);
+  const cw=Math.round(vw*k), ch=Math.round(vh*k); cnv.style.width=cw+'px'; cnv.style.height=ch+'px';
+  const pw=Math.round(cw*dpr), ph=Math.round(ch*dpr); if(cnv.width!==pw||cnv.height!==ph){cnv.width=pw; cnv.height=ph;}
+}
+function camTan(tanLong){ const vw=video.videoWidth||3, vh=video.videoHeight||4; return vh>=vw?[tanLong*vw/vh,tanLong]:[tanLong,tanLong*vh/vw]; }
+
+// ================= scan: paint frames into the sphere =================
+function updateCoverage(R,tH,tV){
+  let num=0,den=0;
+  for(let j=0;j<36;j++){ const lat=((j+.5)/36-.5)*Math.PI, cl=Math.cos(lat), sl=Math.sin(lat);
+    for(let i=0;i<72;i++){ const lon=((i+.5)/72-.5)*2*Math.PI, dx=cl*Math.sin(lon), dy=cl*Math.cos(lon), dz=sl;
+      const k=j*72+i;
+      if(!st.cover[k]){ const cx=R[0]*dx+R[3]*dy+R[6]*dz, cy=R[1]*dx+R[4]*dy+R[7]*dz, cz=R[2]*dx+R[5]*dy+R[8]*dz;
+        if(cz<-0.05 && Math.abs(cx/(-cz))<tH*0.85 && Math.abs(cy/(-cz))<tV*0.85) st.cover[k]=1; }
+      num+=st.cover[k]*cl; den+=cl; } }
+  st.coverPct=num/den;
+}
+function drawMini(){
+  const c=$('#mini'), x=c.getContext('2d'), W=c.width, H=c.height, cw=W/72, ch=H/36;
+  x.fillStyle='#1b1e21'; x.fillRect(0,0,W,H);
+  x.fillStyle='rgba(242,169,59,.75)';
+  for(let j=0;j<36;j++)for(let i=0;i<72;i++) if(st.cover[j*72+i]) x.fillRect(i*cw,(35-j)*ch,cw+.5,ch+.5);
+  x.strokeStyle='rgba(255,255,255,.25)'; x.beginPath(); x.moveTo(0,H/2); x.lineTo(W,H/2); x.stroke();
+  if(ori.R){ const f=rearFwd(ori.R), lon=Math.atan2(f[0],f[1]), lat=Math.asin(Math.max(-1,Math.min(1,f[2])));
+    x.fillStyle='#fff'; x.beginPath(); x.arc((lon/(2*Math.PI)+.5)*W,(.5-lat/Math.PI)*H,4,0,7); x.fill(); }
+  $('#cov').textContent=Math.round(st.coverPct*100)+'%';
+  $('#scanDone').disabled=st.coverPct<0.12;
+}
+function paintFrame(R){
+  const [tH,tV]=camTan(st.rearTanV);
+  gl.bindFramebuffer(gl.FRAMEBUFFER,G.envFbo); gl.viewport(0,0,G.S,G.S/2);
+  gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
+  gl.useProgram(G.paint.p); gl.uniform1i(G.paint.u.vid,1); gl.uniformMatrix3fv(G.paint.u.Rt,false,R); gl.uniform2f(G.paint.u.tanHV,tH,tV);
+  gl.drawArrays(gl.TRIANGLE_STRIP,0,4); gl.disable(gl.BLEND); gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+  updateCoverage(R,tH,tV);
+}
+function scanTick(now){
+  if(!uploadVideo()) return;
+  fitCanvas(); gl.viewport(0,0,cnv.width,cnv.height); gl.useProgram(G.view.p); gl.uniform1f(G.view.u.mode,2); gl.uniform1i(G.view.u.vid,1); gl.uniform1i(G.view.u.env,0);
+  gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+  if(!ori.R) return;
+  const R=oriAt(now-70), f=rearFwd(R), since=now-st.lastPaintT;
+  const moved=st.lastPaintDir?angDeg(f,st.lastPaintDir):999;
+  if(since>110 && ori.speed<35 && (moved>5 || since>1500)){ paintFrame(R); st.lastPaintDir=f; st.lastPaintT=now; drawMini(); }
+  if(ori.speed>=35) $('#scanMsg').firstChild.textContent='לאט יותר…';
+  else $('#scanMsg').firstChild.textContent=st.coverPct>0.85?'מצוין! אפשר לעבור לסלפי':'סובב את הטלפון לאט סביבך';
+  if(st.coverPct>=0.93) goLive();
 }
 
-// ---------- layout / drawing ----------
-let dpr=1;
-function fitCanvas(w,h){
-  dpr=Math.min(2,window.devicePixelRatio||1);
-  const W=window.innerWidth,H=window.innerHeight,k=Math.min(W/w,H/h);
-  const cw=Math.round(w*k),ch=Math.round(h*k);
-  view.style.width=cw+'px'; view.style.height=ch+'px';
-  if(view.width!==Math.round(cw*dpr)) view.width=Math.round(cw*dpr);
-  if(view.height!==Math.round(ch*dpr)) view.height=Math.round(ch*dpr);
+// ================= live =================
+function setFront(){ const [tH,tV]=camTan(st.frontTanV*st.sizeK); st.tanF=[tH,tV]; }
+function renderView(mode,W,H,tanE){
+  gl.useProgram(G.view.p); const u=G.view.u;
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,G.env); gl.uniform1i(u.env,0); gl.uniform1i(u.vid,1);
+  gl.uniformMatrix3fv(u.Rm,false,colMajor(ori.R)); gl.uniform2f(u.tanF,st.tanF[0],st.tanF[1]); gl.uniform1f(u.z,st.z);
+  gl.uniform1f(u.flipV,st.flipV?1:0); gl.uniform1f(u.mode,mode); gl.uniform1f(u.tanE,tanE||1); gl.uniform2f(u.off,st.off[0],st.off[1]); gl.uniform3f(u.gain,st.gain[0],st.gain[1],st.gain[2]);
+  gl.viewport(0,0,W,H); gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
 }
-function ensureFrame(){
-  const vw=video.videoWidth,vh=video.videoHeight; if(!vw) return false;
-  const k=Math.min(1,1280/Math.max(vw,vh)), w=Math.round(vw*k), h=Math.round(vh*k);
-  if(!st.frame||st.frame.width!==w||st.frame.height!==h){ st.frame=mk(w,h); st.mask=buildMask(w,h); st.M=null; st.goodAligns=0; }
-  const x=st.frame.getContext('2d'); x.globalCompositeOperation='copy'; x.setTransform(1,0,0,1,0,0);
-  if(st.flipFrame){x.setTransform(-1,0,0,1,w,0);} x.drawImage(video,0,0,w,h); x.setTransform(1,0,0,1,0,0); x.globalCompositeOperation='source-over';
-  return true;
+function liveTick(now){
+  if(!uploadVideo()||!ori.R) return;
+  setFront(); fitCanvas(); renderView(0,cnv.width,cnv.height);
+  updateReadout();
+  if(CV && !st.calBusy && !st.pinching && !drag.on && now-st.lastCal>(st.calOK?4000:1500) && ori.speed<20) calibrate();
+  else if(!CV && !cvPromise && !st.warnedNoCV){ st.warnedNoCV=true; setStatus('יישור אוטומטי לא זמין. השתמש ב"כיוונון"','warn'); }
 }
-function buildMask(w,h){ // alpha feather on top + sides; bottom stays hard (body continues off-frame)
-  const c=mk(w,h),x=c.getContext('2d'),f=Math.max(8,0.06*Math.min(w,h));
-  x.fillStyle='#fff'; x.fillRect(0,0,w,h); x.globalCompositeOperation='destination-out';
-  const edge=(x0,y0,x1,y1,rx,ry,rw,rh)=>{const g=x.createLinearGradient(x0,y0,x1,y1); g.addColorStop(0,'rgba(0,0,0,1)'); g.addColorStop(1,'rgba(0,0,0,0)'); x.fillStyle=g; x.fillRect(rx,ry,rw,rh);};
-  edge(0,0,0,f,0,0,w,f); edge(0,0,f,0,0,0,f,h); edge(w,0,w-f,0,w-f,0,f,h);
-  return c;
-}
-function win(z,sw,sh){const ww=sw/z,wh=sh/z; return {ww,wh,ox:sw/2-ww/2,oy:sh-wh};}
-function mapM(M,p){return [M.a*p[0]-M.b*p[1]+M.tx, M.b*p[0]+M.a*p[1]+M.ty];}
-function computeZMin(M,sw,sh,scene){
-  const cov=z=>{const {ww,wh,ox,oy}=win(z,sw,sh); for(const p of [[ox,oy],[ox+ww,oy],[ox,oy+wh],[ox+ww,oy+wh]]){const q=mapM(M,p); if(q[0]<-1||q[1]<-1||q[0]>scene.width+1||q[1]>scene.height+1) return false;} return true;};
-  if(!cov(1)) return 1; let lo=0.1,hi=1; if(cov(lo)) return lo; for(let i=0;i<28;i++){const m=(lo+hi)/2; if(cov(m)) hi=m; else lo=m;} return Math.min(1,hi*1.005);
-}
-const tmp={c:null};
-function drawComposite(ctx,W,H,z,frame,mask){
-  const sw=frame.width,sh=frame.height;
-  ctx.setTransform(1,0,0,1,0,0); ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
-  if(!st.M){ ctx.drawImage(frame,0,0,W,H); return; }
-  const {ox,oy,ww}=win(z,sw,sh),k=W/ww,{a,b,tx,ty}=st.M,det=a*a+b*b;
-  ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality='high';
-  if(z<0.999){ ctx.setTransform(k*a/det,-k*b/det,k*b/det,k*a/det,k*(-(a*tx+b*ty)/det-ox),k*(-(-b*tx+a*ty)/det-oy)); ctx.drawImage(st.sceneCC||st.scene,0,0);
-    if(!tmp.c||tmp.c.width!==sw||tmp.c.height!==sh) tmp.c=mk(sw,sh);
-    const t=tmp.c.getContext('2d'); t.globalCompositeOperation='copy'; t.drawImage(frame,0,0); t.globalCompositeOperation='destination-in'; t.drawImage(mask,0,0); t.globalCompositeOperation='source-over';
-    ctx.setTransform(k,0,0,k,-k*ox,-k*oy); ctx.drawImage(tmp.c,0,0);
-  } else { ctx.setTransform(k,0,0,k,-k*ox,-k*oy); ctx.drawImage(frame,0,0); }
-  ctx.setTransform(1,0,0,1,0,0);
-}
-function baseFov(){return st.frame&&st.frame.width>st.frame.height?66:52;}
-function updateReadout(){ $('#zv').textContent=st.z.toFixed(2)+'×'; $('#fov').textContent=Math.round(2*Math.atan(Math.tan(baseFov()*Math.PI/360)/st.z)*180/Math.PI)+'°'; }
+function updateReadout(){ $('#zv').textContent=st.z.toFixed(2)+'×'; $('#fov').textContent=Math.round(2*Math.atan(st.tanF[0]/st.z)/DEG)+'°'; }
 
-// ---------- live loop ----------
-function loop(){
-  if(st.phase==='live'||st.phase==='scan'){
-    if(ensureFrame()){
-      fitCanvas(st.frame.width,st.frame.height);
-      if(st.phase==='scan'){ vctx.setTransform(1,0,0,1,0,0); vctx.drawImage(st.frame,0,0,view.width,view.height); }
-      else { drawComposite(vctx,view.width,view.height,st.z,st.frame,st.mask);
-        if(!st.aligning && !st.pinching && performance.now()-st.lastAlign>(CV?(st.goodAligns?3500:1200):5000)) align(); }
-    }
-  }
-  requestAnimationFrame(loop);
-}
-
-// ---------- alignment ----------
-function colorFix(){
-  const s=st.frame,W=120,H=Math.round(W*s.height/s.width),k=W/s.width,{a,b,tx,ty}=st.M,det=a*a+b*b;
-  const A=mk(W,H),ax=A.getContext('2d',{willReadFrequently:true}); ax.setTransform(k*a/det,-k*b/det,k*b/det,k*a/det,k*(-(a*tx+b*ty)/det),k*(-(-b*tx+a*ty)/det)); ax.drawImage(st.scene,0,0);
-  const B=mk(W,H),bx=B.getContext('2d',{willReadFrequently:true}); bx.drawImage(s,0,0,W,H);
-  const da=ax.getImageData(0,0,W,H).data,db=bx.getImageData(0,0,W,H).data,sa=[0,0,0],sa2=[0,0,0],sb=[0,0,0],sb2=[0,0,0]; let n=0;
-  for(let y=0;y<H;y++)for(let x=0;x<W;x++){const nx=(x/W-.5)/.36,ny=(y/H-.68)/.5; if(nx*nx+ny*ny<=1) continue; const i=(y*W+x)*4; if(da[i+3]<255) continue; n++;
-    for(let c=0;c<3;c++){sa[c]+=da[i+c]; sa2[c]+=da[i+c]*da[i+c]; sb[c]+=db[i+c]; sb2[c]+=db[i+c]*db[i+c];}}
-  if(n<60){st.sceneCC=st.scene; return;}
-  const L=[0,1,2].map(c=>{const ma=sa[c]/n,mb=sb[c]/n,va=Math.sqrt(Math.max(1,sa2[c]/n-ma*ma)),vb=Math.sqrt(Math.max(1,sb2[c]/n-mb*mb)),g=Math.min(1.4,Math.max(0.7,vb/va)),o=mb-g*ma,T=new Uint8ClampedArray(256); for(let v=0;v<256;v++) T[v]=g*v+o; return T;});
-  const C=st.sceneCC&&st.sceneCC!==st.scene?st.sceneCC:mk(st.scene.width,st.scene.height),cx=C.getContext('2d',{willReadFrequently:true}); cx.drawImage(st.scene,0,0);
-  const id=cx.getImageData(0,0,C.width,C.height),d=id.data; for(let i=0;i<d.length;i+=4){d[i]=L[0][d[i]]; d[i+1]=L[1][d[i+1]]; d[i+2]=L[2][d[i+2]];} cx.putImageData(id,0,0); st.sceneCC=C;
-}
-let sceneFeat=null;
-async function align(){
-  st.aligning=true; st.lastAlign=performance.now();
+// Auto-calibration: render the sphere as the front camera would see it (wider), find the live selfie inside it.
+async function calibrate(){
+  st.calBusy=true; st.lastCal=performance.now();
   try{
-    const f=st.frame; let r=null;
-    if(CV){
-      const sID=imageDataOf(st.scene,900), fID=imageDataOf(f,640);
-      const rr=alignSelfieToScene(CV,sID,fID);
-      if(rr&&!rr.weak){ const kc=sID.width/st.scene.width, ks=fID.width/f.width; r={m:{a:rr.m.a*ks/kc,b:rr.m.b*ks/kc,tx:rr.m.tx/kc,ty:rr.m.ty/kc},flipped:rr.flipped,inliers:rr.inliers}; }
-    } else if(!cvPromise){ const rr=jsAlign(st.scene,f); if(rr&&!rr.weak) r=rr; }
-    if(r){
-      if(r.flipped){ st.flipFrame=!st.flipFrame; ensureFrame(); }
-      const prev=st.M;
-      st.M = (prev&&!r.flipped)? {a:(prev.a+r.m.a)/2,b:(prev.b+r.m.b)/2,tx:(prev.tx+r.m.tx)/2,ty:(prev.ty+r.m.ty)/2} : r.m;
-      if(!prev||st.goodAligns%3===0) colorFix();
-      st.zMin=computeZMin(st.M,f.width,f.height,st.scene);
-      if(st.z<st.zMin) st.z=st.zMin;
-      st.goodAligns++;
-      if(st.zMin>=0.999) setStatus('הנוף לא מכסה את הסלפי. נסה לסרוק שוב רחב יותר','warn');
-      else { setStatus(st.goodAligns===1?`נמצאה התאמה (${r.inliers})`:'מוכן','ok'); $('#pinchHint').hidden=st.goodAligns>3; }
-    } else if(!st.M){ setStatus(CV||!cvPromise?'מחפש את הנוף מאחוריך… ודא שהוא נראה ברקע':'טוען מנוע התאמה…'); }
+    const vw=video.videoWidth, vh=video.videoHeight, w=480, h=Math.round(480*vh/vw); if(h>1200) throw 0;
+    if(G.ch!==h){ G.ch=h; gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D,G.calTex); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,G.cw,G.ch,0,gl.RGBA,gl.UNSIGNED_BYTE,null); gl.bindTexture(gl.TEXTURE_2D,null); }
+    const tanE=st.tanF[0]*1.9;
+    gl.bindFramebuffer(gl.FRAMEBUFFER,G.calFbo); renderView(1,G.cw,G.ch,tanE);
+    const px=new Uint8Array(G.cw*G.ch*4); gl.readPixels(0,0,G.cw,G.ch,gl.RGBA,gl.UNSIGNED_BYTE,px); gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+    const envID=new ImageData(G.cw,G.ch), row=G.cw*4; for(let y=0;y<G.ch;y++) envID.data.set(px.subarray((G.ch-1-y)*row,(G.ch-y)*row),y*row);
+    const sc=mk(w,h), sx=sc.getContext('2d',{willReadFrequently:true}); if(st.flipV){sx.translate(w,0);sx.scale(-1,1);} sx.drawImage(video,0,0,w,h);
+    const selID=sx.getImageData(0,0,w,h);
+    await sleep(0);
+    const r=alignSelfieToScene(CV,envID,selID);
+    if(!r||r.weak||r.inliers<14){ if(!st.calOK) setStatus('מחפש את הנוף מאחוריך… ודא שהוא נראה ברקע'); return; }
+    if(r.flipped) st.flipV=!st.flipV;
+    const {a,b,tx,ty}=r.m, s=Math.hypot(a,b), W=G.cw, H=G.ch;
+    const tH=s*w/W*tanE; if(tH<st.tanF[0]*0.4||tH>st.tanF[0]*2.5) return;
+    const cx=a*w/2-b*h/2+tx, cy=b*w/2+a*h/2+ty;
+    const offX=(cx/W*2-1)*tanE, offY=(1-cy/H*2)*tanE*H/W;
+    // gain: compare colours on the ring around the person
+    const gs=[0,0,0], ge=[0,0,0]; let n=0;
+    for(let j=0;j<32;j++)for(let i=0;i<24;i++){ const u=(i+.5)/24, v=(j+.5)/32, nx=(u-.5)/.36, ny=(v-.68)/.5; if(nx*nx+ny*ny<=1) continue;
+      const pX=u*w, pY=v*h, qX=Math.round(a*pX-b*pY+tx), qY=Math.round(b*pX+a*pY+ty); if(qX<0||qY<0||qX>=W||qY>=H) continue;
+      const ei=(qY*W+qX)*4, si=(Math.round(pY)*w+Math.round(pX))*4; const E=envID.data, S=selID.data;
+      if(Math.abs(E[ei]-23)<3&&Math.abs(E[ei+1]-26)<3&&Math.abs(E[ei+2]-28)<3) continue;
+      for(let c=0;c<3;c++){gs[c]+=S[si+c]; ge[c]+=E[ei+c];} n++; }
+    const k=st.calOK?0.5:1, lerp=(p,q)=>p+(q-p)*k;
+    const newSize=st.sizeK*tH/st.tanF[0];
+    st.sizeK=lerp(st.sizeK,newSize); st.off=[lerp(st.off[0],offX),lerp(st.off[1],offY)];
+    if(n>40) st.gain=st.gain.map((g,c)=>lerp(g,Math.min(1.6,Math.max(0.6,(gs[c]+1)/(ge[c]+1)))));
+    $('#sizeR').value=Math.round(Math.log(st.sizeK)*1000);
+    if(!st.calOK) setStatus(`הסלפי הותאם לסביבה (${r.inliers})`,'ok');
+    st.calOK++;
   }catch(e){ console.warn(e); }
-  updateReadout(); st.aligning=false;
+  finally{ st.calBusy=false; }
 }
 
-// ---------- scan flow ----------
-function sharpness(c){const w=160,h=Math.round(160*c.height/c.width),g=grayOf(c,w,h,false); let s=0,s2=0,n=0;
-  for(let y=1;y<h-1;y++)for(let x=1;x<w-1;x++){const i=y*w+x,l=4*g[i]-g[i-1]-g[i+1]-g[i-w]-g[i+w]; s+=l; s2+=l*l; n++;} return s2/n-(s/n)*(s/n);}
-let scanAbort=null;
+// ================= main loop =================
+function loop(now){ try{ if(st.phase==='scan') scanTick(now); else if(st.phase==='live') liveTick(now); }catch(e){ console.warn(e); } requestAnimationFrame(loop); }
+
 async function startScan(){
-  st.phase='scan'; st.M=null; st.flipFrame=false; st.goodAligns=0; st.z=1;
-  $('#liveUI').hidden=true; $('#scanUI').hidden=false; view.classList.remove('mirror');
-  const dev=st.rearDevices[st.rearIdx]; const tr=await openCamera('environment',dev&&dev.deviceId);
-  if(!st.rearDevices.length) await listRear();
-  const token={}; scanAbort=token;
-  for(let n=3;n>0;n--){ $('#count').textContent=n; await sleep(800); if(scanAbort!==token) return; }
-  $('#count').textContent=''; await captureScene(tr,token);
+  st.phase='idle'; $('#liveUI').hidden=true; $('#scanUI').hidden=false; cnv.classList.remove('mirror');
+  clearEnv(); st.cover.fill(0); st.coverPct=0; st.lastPaintDir=null; st.lastPaintT=0; drawMini();
+  await openCamera('environment'); st.phase='scan';
 }
-async function captureScene(tr,token){
-  if(scanAbort!==token) return; scanAbort=null; $('#count').textContent='';
-  let best=null,bs=-1;
-  try{ if(window.ImageCapture&&tr){ const blob=await Promise.race([new ImageCapture(tr).takePhoto(),sleep(2500).then(()=>null)]); if(blob){ const bmp=await createImageBitmap(blob); best=toCanvas(bmp,2000); } } }catch(e){}
-  if(!best){ for(let i=0;i<6;i++){ const c=toCanvas(video,2000), s=sharpness(c); if(s>bs){bs=s; best=c;} await sleep(90); } }
-  st.scene=best; st.sceneCC=null;
-  await startLive();
-}
-async function startLive(){
+let goingLive=false;
+async function goLive(){
+  if(goingLive) return; goingLive=true; st.phase='idle';
   $('#scanUI').hidden=true; $('#liveUI').hidden=false; $('#pinchHint').hidden=false;
-  setStatus(CV?'מחפש את הנוף מאחוריך…':'טוען מנוע התאמה…');
-  await openCamera('user'); st.phase='live'; st.lastAlign=performance.now()-600;
-  view.classList.toggle('mirror',st.mirror);
+  st.z=1; st.calOK=0; st.lastCal=0; st.off=[0,0]; st.gain=[1,1,1]; st.flipV=false; st.sizeK=1; $('#sizeR').value=0;
+  setStatus(CV?'מתאים את הסלפי לסביבה…':'טוען מנוע יישור…');
+  await openCamera('user'); cnv.classList.toggle('mirror',st.mirror); st.phase='live'; goingLive=false;
 }
 
-// ---------- gestures: spreading two fingers = zoom OUT ----------
-const ptr=new Map(); let lastD=0;
+// ================= gestures =================
+const ptr=new Map(); let lastD=0; const drag={on:false,x:0,y:0};
 const stage=$('#stage');
 function dist(){const p=[...ptr.values()]; return p.length<2?0:Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y);}
-stage.addEventListener('pointerdown',e=>{ ptr.set(e.pointerId,{x:e.clientX,y:e.clientY}); if(ptr.size===2){lastD=dist(); st.pinching=true;} });
+stage.addEventListener('pointerdown',e=>{ ptr.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(ptr.size===2){ lastD=dist(); st.pinching=true; drag.on=false; } else if(ptr.size===1&&!$('#tune').hidden){ drag.on=true; drag.x=e.clientX; drag.y=e.clientY; } });
 stage.addEventListener('pointermove',e=>{ if(!ptr.has(e.pointerId)) return; ptr.set(e.pointerId,{x:e.clientX,y:e.clientY});
-  if(ptr.size===2&&st.phase==='live'&&st.M){ const d=dist(); if(lastD>0&&d>0){ st.z=Math.min(1,Math.max(st.zMin,st.z*lastD/d)); updateReadout(); if(st.z<0.97) $('#pinchHint').hidden=true; } lastD=d; } });
-['pointerup','pointercancel'].forEach(t=>stage.addEventListener(t,e=>{ ptr.delete(e.pointerId); if(ptr.size<2){st.pinching=false; lastD=0;} }));
-stage.addEventListener('wheel',e=>{ if(st.phase!=='live'||!st.M) return; e.preventDefault(); st.z=Math.min(1,Math.max(st.zMin,st.z*Math.exp(e.deltaY*0.0015))); updateReadout(); },{passive:false});
-document.addEventListener('gesturestart',e=>e.preventDefault()); // stop iOS page zoom
+  if(st.phase!=='live') return;
+  if(ptr.size===2){ const d=dist(); if(lastD>0&&d>0){ st.z=Math.min(1,Math.max(0.28,st.z*lastD/d)); if(st.z<0.96) $('#pinchHint').hidden=true; } lastD=d; }
+  else if(drag.on){ const r=cnv.getBoundingClientRect(); let dx=e.clientX-drag.x, dy=e.clientY-drag.y; drag.x=e.clientX; drag.y=e.clientY;
+    if(st.mirror) dx=-dx; const kx=2*st.tanF[0]/st.z/r.width, ky=2*st.tanF[1]/st.z/r.height;
+    st.off[0]-=dx*kx; st.off[1]+=dy*ky; st.lastCal=performance.now()+20000; } });
+['pointerup','pointercancel'].forEach(t=>stage.addEventListener(t,e=>{ ptr.delete(e.pointerId); if(ptr.size<2){st.pinching=false; lastD=0;} if(ptr.size===0) drag.on=false; }));
+stage.addEventListener('wheel',e=>{ if(st.phase!=='live') return; e.preventDefault(); st.z=Math.min(1,Math.max(0.28,st.z*Math.exp(e.deltaY*0.0015))); },{passive:false});
+document.addEventListener('gesturestart',e=>e.preventDefault());
 
-// ---------- buttons ----------
+// ================= buttons =================
 $('#startBtn').addEventListener('click',async()=>{
-  $('#introErr').hidden=true;
-  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){ $('#introErr').textContent='הדפדפן לא מאפשר גישה למצלמה. פתח את הדף ב-Safari או ב-Chrome, בכתובת https.'; $('#introErr').hidden=false; return; }
-  try{ show('cam'); loadCV().then(r=>{CV=r.cv;}).catch(()=>{}); await startScan(); }
-  catch(e){ show('intro'); $('#introErr').textContent='אין גישה למצלמה. אשר הרשאת מצלמה לדפדפן ונסה שוב.'; $('#introErr').hidden=false; }
+  const err=$('#introErr'); err.hidden=true;
+  try{
+    if(typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function'){
+      const p=await DeviceOrientationEvent.requestPermission(); if(p!=='granted') throw new Error('motion'); }
+    window.addEventListener('deviceorientation',onOri);
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia) throw new Error('cam');
+    if(!gl) initGL();
+    show('cam'); loadCV().then(r=>{CV=r.cv;}).catch(()=>{});
+    await startScan();
+    await sleep(1500);
+    if(!ori.got){ st.phase='idle'; stopStream(); show('intro'); err.textContent='לא מתקבלים נתונים מחיישן התנועה. צריך טלפון, ובדפדפן לאפשר "חיישני תנועה" לאתר.'; err.hidden=false; }
+  }catch(e){
+    show('intro'); stopStream();
+    err.textContent=e&&e.message==='motion'?'צריך לאשר גישה לחיישן התנועה כדי לסרוק את הסביבה.':
+      e&&e.message==='webgl'?'הדפדפן לא תומך בגרפיקה הנדרשת (WebGL).':'אין גישה למצלמה. אשר הרשאת מצלמה לאתר ונסה שוב.';
+    err.hidden=false;
+  }
 });
-$('#snapNow').addEventListener('click',()=>{ const t=scanAbort; if(t) captureScene(st.stream&&st.stream.getVideoTracks()[0],t); });
-$('#lensBtn').addEventListener('click',async()=>{ st.rearIdx=(st.rearIdx+1)%st.rearDevices.length; scanAbort=null; await startScan(); });
-$('#rescan').addEventListener('click',()=>startScan());
-$('#mirrorBtn').addEventListener('click',()=>{ st.mirror=!st.mirror; view.classList.toggle('mirror',st.mirror); $('#mirrorBtn').textContent='מראה: '+(st.mirror?'פועל':'כבוי'); });
+$('#scanDone').addEventListener('click',goLive);
+$('#rescan').addEventListener('click',()=>{ $('#tune').hidden=true; startScan(); });
+$('#mirrorBtn').addEventListener('click',()=>{ st.mirror=!st.mirror; cnv.classList.toggle('mirror',st.mirror); $('#mirrorBtn').textContent='מראה: '+(st.mirror?'פועל':'כבוי'); });
+$('#tuneBtn').addEventListener('click',()=>{ $('#tune').hidden=!$('#tune').hidden; });
+$('#tuneDone').addEventListener('click',()=>{ $('#tune').hidden=true; });
+$('#sizeR').addEventListener('input',e=>{ st.sizeK=Math.exp(e.target.value/1000); st.lastCal=performance.now()+20000; });
+$('#autoAlign').addEventListener('click',()=>{ st.calOK=0; st.lastCal=0; setStatus(CV?'מיישר…':'מנוע היישור לא נטען'); });
 let lastBlob=null;
 $('#shutter').addEventListener('click',async()=>{
-  if(!st.frame) return;
-  const vw=video.videoWidth,vh=video.videoHeight, k=Math.min(1,1920/Math.max(vw,vh));
-  const fr=mk(Math.round(vw*k),Math.round(vh*k)), fx=fr.getContext('2d'); if(st.flipFrame){fx.setTransform(-1,0,0,1,fr.width,0);} fx.drawImage(video,0,0,fr.width,fr.height);
-  const s=fr.width/st.frame.width, M0=st.M; if(M0) st.M={a:M0.a/s,b:M0.b/s,tx:M0.tx,ty:M0.ty};
-  const outW=Math.min(2400,Math.round(fr.width/Math.sqrt(st.z))), outH=Math.round(outW*fr.height/fr.width), out=mk(outW,outH);
-  drawComposite(out.getContext('2d'),outW,outH,st.z,fr,buildMask(fr.width,fr.height));
-  st.M=M0;
-  lastBlob=await new Promise(r=>out.toBlob(r,'image/jpeg',0.92));
+  if(st.phase!=='live'||!ori.R) return;
+  const vw=video.videoWidth, vh=video.videoHeight, outW=Math.min(2400,Math.round(vw/Math.sqrt(st.z))), outH=Math.round(outW*vh/vw);
+  const pw=cnv.width, ph=cnv.height; cnv.width=outW; cnv.height=outH;
+  uploadVideo(); renderView(0,outW,outH);
+  lastBlob=await new Promise(r=>cnv.toBlob(r,'image/jpeg',0.92));
+  cnv.width=pw; cnv.height=ph;
+  if(!lastBlob) return;
   $('#resImg').src=URL.createObjectURL(lastBlob); st.phase='result'; show('result');
 });
 $('#shareBtn').addEventListener('click',async()=>{
